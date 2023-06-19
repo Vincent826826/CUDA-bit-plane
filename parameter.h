@@ -1,2 +1,2 @@
-#define N 10000
+#define N 3
 #define BYTE_SIZE 8
