@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cstdlib> 
+#include <stdio.h>
 #include <time.h>
 #include "parameter.h"
 using namespace std;
 void cpu_bit_plane(int *original, int **result)
 {
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         int val_cpy = original[i];
         for(int bit = 0; bit < BYTE_SIZE; bit++)
@@ -18,7 +19,7 @@ void cpu_bit_plane(int *original, int **result)
 void generate_number(int *original)
 {
     
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         original[i] = int(rand()% (1<<BYTE_SIZE) );
     }
@@ -27,7 +28,7 @@ void generate_number(int *original)
 bool validate(int *original, int **result)
 {
     // check the result before and after bit plane
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         int sum = 0;
         for(int bit = 0; bit < BYTE_SIZE; bit++)
@@ -40,13 +41,13 @@ bool validate(int *original, int **result)
 }
 void print_original(int* original)
 {
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
         cout<<original[i]<<" ";
     cout<<endl;
 }
 void print_result(int** result)
 {
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         for(int j = BYTE_SIZE - 1; j >= 0 ; j--)
         {
@@ -59,9 +60,9 @@ void print_result(int** result)
 }
 int main()
 {
-    int *original =  (int*)calloc(N, sizeof(int));
-    int **result = (int**)calloc(N, sizeof(int*));
-    for(int i = 0; i < N; i++)
+    int *original =  (int*)calloc(ARRAY_SIZE, sizeof(int));
+    int **result = (int**)calloc(ARRAY_SIZE, sizeof(int*));
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         result[i] = (int*)calloc(BYTE_SIZE, sizeof(int));
     }
@@ -70,7 +71,7 @@ int main()
 
     // init data
     cout<<endl<<"Init finished"<<endl;
-    cout<<"Array size is "<<N<<endl;
+    cout<<"Array size is "<<ARRAY_SIZE<<endl;
     
     clock_t tStart = clock();
     
