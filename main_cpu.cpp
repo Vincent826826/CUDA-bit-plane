@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib> 
+#include <time.h>
 #include "parameter.h"
 using namespace std;
 void cpu_bit_plane(int *original, int **result)
@@ -47,7 +48,7 @@ void print_result(int** result)
 {
     for(int i = 0; i < N; i++)
     {
-        for(int j = 7; j >= 0 ; j--)
+        for(int j = BYTE_SIZE - 1; j >= 0 ; j--)
         {
             // little-endian represntation
             cout<<result[i][j];
@@ -69,17 +70,22 @@ int main()
 
     // init data
     cout<<endl<<"Init finished"<<endl;
+    cout<<"Array size is "<<N<<endl;
     
+    clock_t tStart = clock();
     
     cpu_bit_plane(original, result);
 
-    print_original(original);
-    print_result(result);
+    printf("Time taken: %.8fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+
+    // print_original(original);
+    // print_result(result);
     
+    cout<<"Compare result is ";
     if(validate(original, result))
-        cout<<"Correct"<<endl;
+        cout<<"correct"<<endl;
     else
-        cout<<"Incorrect"<<endl;
+        cout<<"incorrect"<<endl;
 
     return 0;
 }
