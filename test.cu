@@ -1,49 +1,34 @@
 #include <iostream>
-#include <cstdlib> 
-#include <stdio.h>
-#include <time.h>
-#include "parameter.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 using namespace std;
 
-const int BlockSize = 2;
+const int BlockSize = 4;
 const int ThreadNum = 4;
-
-__global__ void test(int *original, int **result)
+const int N = 4;
+__global__ void MatAdd(int *A)
 {
-
-    int TotalThread = blockDim.x * gridDim.x;
-    int stripe = ARRAY_SIZE / TotalThread;
-    int head = (blockIdx.x * blockDim.x + threadIdx.x) * stripe;
-    int LoopLim = head + stripe;
-
-    for(int i = head; i < LoopLim; i++)
-    {
-        int val_cpy = original[i];
-        for(int bit = 0; bit < BYTE_SIZE; bit++)
-        {
-            result[i][bit] = val_cpy & 1;
-            val_cpy = val_cpy >> 1;
-        }
-    }
+   int i = threadIdx.x;
+   int j = threadIdx.y;
+   printf("A[%d][%d]=%d\n", i, j, A[i * N + j]));
 }
 
 
 int main()
 {
-    int **result;
-    int **d_result;
-   
-	cudaMalloc((void**) &d_a,sizeof(int)*N);
-	cudaMemcpy(d_a,a,sizeof(int)*N,cudaMemcpyHostToDevice);
-	
+	int **a = (int **) malloc (N * sizeof(int *));
+	for(int i=0; i < N;i++) 
+		a[i]= (int *) malloc (N * sizeof(int));
+	int *c_a;
+	for (int i = 0; i < N; i++) 
+		for(int j = 0; j < N; j++) 
+			a[i][j] = 1;
+	cudaMalloc((void **)&c_a, N * sizeof(int) * N);
+	cudaMemcpy(c_a, a, N * sizeof(int) * N, cudaMemcpyHostToDevice);
+
     dim3 dimBlock(BlockSize);
     dim3 dimGrid(ThreadNum);
-    increment_gpu<<<dimGrid,dimBlock>>>(d_a,b,N);
-	cudaDeviceSynchronize();
-	
-	cudaMemcpy(a,d_a,sizeof(int)*N,cudaMemcpyDeviceToHost);
-	
+    MatAdd<<<dimGrid,dimBlock>>>(c_a);
+
 	return 0;
 }
