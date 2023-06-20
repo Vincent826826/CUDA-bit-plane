@@ -5,29 +5,22 @@
 #include "parameter.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include
 using namespace std;
 
-const int BlockSize = 4;
-const int ThreadNum = 4;
+const int BlockSize = 1;
+const int ThreadNum = 3;
 
-__global__ void gpu_bit_plane(int *original, int **result)
+__global__ void gpu_bit_plane(int *d_oringinal, int*d_result)
 {
+    int idx = blockIdx.x*blockDim.x + threadIdx.x;
+    for(int i = 0; i < BYTE_SIZE; i++)
+	{
+		d_result[BYTE_SIZE*idx + i] = d_oringinal[idx] + i;
+	}
 
-    int TotalThread = blockDim.x * gridDim.x;
-    int stripe = ARRAY_SIZE / TotalThread;
-    int head = (blockIdx.x * blockDim.x + threadIdx.x) * stripe;
-    int LoopLim = head + stripe;
-
-    for(int i = head; i < LoopLim; i++)
-    {
-        int val_cpy = original[i];
-        for(int bit = 0; bit < BYTE_SIZE; bit++)
-        {
-            result[i][bit] = val_cpy & 1;
-            val_cpy = val_cpy >> 1;
-        }
-    }
 }
+
 void generate_number(int *original)
 {
     
@@ -37,67 +30,35 @@ void generate_number(int *original)
     }
 }
 
-bool validate(int *original, int **result)
-{
-    // check the result before and after bit plane
-    for(int i = 0; i < ARRAY_SIZE; i++)
-    {
-        int sum = 0;
-        for(int bit = 0; bit < BYTE_SIZE; bit++)
-        {
-            sum += result[i][bit] << bit;
-        }
-        if(original[i] != sum)return false;
-    }
-    return true;
-}
-void print_original(int* original)
-{
-    for(int i = 0; i < ARRAY_SIZE; i++)
-        cout<<original[i]<<" ";
-    cout<<endl;
-}
-
-void print_result(int** result)
-{
-    for(int i = 0; i < ARRAY_SIZE; i++)
-    {
-        for(int j = BYTE_SIZE - 1; j >= 0 ; j--)
-        {
-            // little-endian represntation
-            cout<<result[i][j];
-        }
-        cout<<endl;
-    }
-    cout<<endl;
-}
-
 int main()
 {
     int *original =  (int*)calloc(ARRAY_SIZE, sizeof(int));
-    int **result;
-    int *d_original;
-    int **d_result;
-    /*int **result = (int**)calloc(ARRAY_SIZE, sizeof(int*));
-    for(int i = 0; i < ARRAY_SIZE; i++)
-    {
-        result[i] = (int*)calloc(BYTE_SIZE, sizeof(int));
-    }
-    */
-    generate_number(original);
+	int *d_oringinal = 0;
+	int *result  = (int*)calloc(BYTE_SIZE*ARRAY_SIZE, sizeof(int));
+	int *d_result = 0;
+	int i;
+
+	generate_number(original);
+
+	// init data
+    cout<<endl<<"Init finished"<<endl;
+    cout<<"Array size is "<<ARRAY_SIZE<<endl;
+
+	clock_t tStart = clock();
 	
-	
-	
-	cudaMalloc((void**) &d_a,sizeof(int)*N);
-	cudaMemcpy(d_a,a,sizeof(int)*N,cudaMemcpyHostToDevice);
+	cudaMalloc((void**) &d_oringinal, sizeof(int)*ARRAY_SIZE);
+	cudaMemcpy(d_oringinal, oringinal, sizeof(int)*ARRAY_SIZE, cudaMemcpyHostToDevice);
+	cudaMalloc((void**) &d_result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE);
+	cudaMemcpy(d_result, result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE, cudaMemcpyHostToDevice);
 	
     dim3 dimBlock(BlockSize);
     dim3 dimGrid(ThreadNum);
-    increment_gpu<<<dimGrid,dimBlock>>>(d_a,b,N);
+    gpu_bit_plane<<<dimGrid,dimBlock>>>(d_oringinal, d_result);
 	cudaDeviceSynchronize();
 	
-	cudaMemcpy(a,d_a,sizeof(int)*N,cudaMemcpyDeviceToHost);
+	cudaMemcpy(result, d_result,sizeof(int)*ARRAY_SIZE*BYTE_SIZE,cudaMemcpyDeviceToHost);
 	
+	printf("Time taken: %.8fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
 	
 	return 0;
 }
