@@ -1,3 +1,0 @@
-{ "application": "main_1.cu", "ISA": "Emulated", "device": "Ocelot PTX Emulator", "kernel": "_Z13increment_gpuPiii", "sequenceNumberInApplication": 0, "instructions": 90, "kernelRuntime": 0.000123739 }, 
-{ "application": "main_1.cu", "ISA": "Emulated", "device": "Ocelot PTX Emulator", "kernel": "_Z13increment_gpuPiii", "sequenceNumberInApplication": 0, "instructions": 90, "kernelRuntime": 0.00117469 }, 
-{ "application": "main_2.cu", "ISA": "Emulated", "device": "Ocelot PTX Emulator", "kernel": "_Z13increment_gpuPiii", "sequenceNumberInApplication": 0, "instructions": 175, "kernelRuntime": 0.000157356 }, 
