@@ -13,11 +13,13 @@ const int ThreadNum = 8;
 __global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
     int idx = blockIdx.x*blockDim.x + threadIdx.x;
-    for(int i = 0; i < BYTE_SIZE; i++)
+	int val_cpy = original[i];
+    for(int bit = 0; bit < BYTE_SIZE; bit++)
 	{
-		d_result[BYTE_SIZE*idx + i] = d_original[idx] + i;
+		d_result[BYTE_SIZE*idx + bit] = = val_cpy & 1;
+		val_cpy = val_cpy >> 1;
 	}
-
+	
 }
 
 void generate_number(int *original)
