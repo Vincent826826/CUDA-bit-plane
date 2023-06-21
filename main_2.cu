@@ -14,9 +14,8 @@ __global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
 
 	int TotalThread = gridDim.x*blockDim.x;
-	int stripe = ARRAY_SIZE / TotalThread;
     int head = blockIdx.x*blockDim.x + threadIdx.x;
-	for(int idx = head; idx< ARRAY_SIZE; idx+=stripe)
+	for(int idx = head; idx< ARRAY_SIZE; idx += TotalThread)
 	{
 		int val_cpy = d_original[idx];
 		for(int bit = 0; bit < BYTE_SIZE; bit++)
