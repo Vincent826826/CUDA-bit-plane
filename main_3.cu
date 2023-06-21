@@ -11,7 +11,7 @@ const int BlockSize = 2;
 const int ThreadNum = 8;
 
 // change the way of getting target bit
-inline int get_target_bit(int byteFlag, int whichBit)
+__device__ int get_target_bit(int byteFlag, int whichBit)
 {
     if (whichBit >= 0 && whichBit < 8)
         return (byteFlag & (1<<whichBit)) >> whichBit;
@@ -22,7 +22,6 @@ inline int get_target_bit(int byteFlag, int whichBit)
 __global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
 
-	int TotalThread = gridDim.x*blockDim.x;
     int idx = blockIdx.x*blockDim.x + threadIdx.x;
 	int start_idx = int(idx / 8);
 	int bit = idx % 8;
