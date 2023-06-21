@@ -1,2 +1,2 @@
-#define ARRAY_SIZE 512
+#define ARRAY_SIZE 64
 #define BYTE_SIZE 8

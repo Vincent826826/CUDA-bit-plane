@@ -7,8 +7,8 @@
 #include <cuda_runtime.h>
 using namespace std;
 
-const int BlockSize = 1;
-const int ThreadNum = 3;
+const int BlockSize = 2;
+const int ThreadNum = 8;
 
 __global__ void gpu_bit_plane(int *d_oringinal, int*d_result)
 {
@@ -27,6 +27,43 @@ void generate_number(int *original)
     {
         original[i] = int(rand()% (1<<BYTE_SIZE) );
     }
+}
+
+void print_original(int* original)
+{
+	cout<<"Original = "<<endl;
+    for(int i = 0; i < ARRAY_SIZE; i++)
+        cout<<original[i]<<" ";
+    cout<<endl;
+}
+
+void print_result1D(int* result)
+{
+	cout<<"Result = "<<endl;
+	for(int i = 0; i < ARRAY_SIZE; i++)
+	{
+		for(int j = BYTE_SIZE - 1; j >= 0; j--)
+		{
+			cout<<result[ i * BYTE_SIZE + j];
+		}
+		cout<<endl;
+	}
+	cout<<endl;
+}
+
+bool validate(int *original, int *result)
+{
+    // check the result before and after bit plane
+    for(int i = 0; i < ARRAY_SIZE; i++)
+    {
+        int sum = 0;
+        for(int bit = 0; bit < BYTE_SIZE; bit++)
+        {
+            sum += result[i * BYTE_SIZE + bit] << bit;
+        }
+        if(original[i] != sum)return false;
+    }
+    return true;
 }
 
 int main()
@@ -56,6 +93,11 @@ int main()
 	
 	cudaMemcpy(result, d_result,sizeof(int)*ARRAY_SIZE*BYTE_SIZE,cudaMemcpyDeviceToHost);
 	
+
+	print_original(oringinal);
+	print_result1D(result);
+	
+
 	printf("Time taken: %.8fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
 	
 	return 0;
