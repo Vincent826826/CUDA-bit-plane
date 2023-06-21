@@ -13,7 +13,7 @@ const int ThreadNum = 8;
 __global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
     int idx = blockIdx.x*blockDim.x + threadIdx.x;
-	int val_cpy = original[iidx;
+	int val_cpy = d_original[idx];
     for(int bit = 0; bit < BYTE_SIZE; bit++)
 	{
 		d_result[BYTE_SIZE*idx + bit] = val_cpy & 1;
