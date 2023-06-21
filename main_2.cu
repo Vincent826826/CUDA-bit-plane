@@ -53,7 +53,7 @@ void print_result1D(int* result)
 		int sum = 0;
 		for(int bit = BYTE_SIZE - 1; bit >= 0; bit--)
 		{
-			cout<<result[ i * BYTE_SIZE + j];
+			cout<<result[ i * BYTE_SIZE + bit];
 			sum += result[i * BYTE_SIZE + bit] << bit;
 		}
 		cout<<" = "<<sum<<endl;
