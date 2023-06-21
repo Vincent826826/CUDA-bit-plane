@@ -51,10 +51,10 @@ void print_result1D(int* result)
 	{
 		cout<<"["<<i<<"] : ";
 		int sum = 0;
-		for(int j = BYTE_SIZE - 1; j >= 0; j--)
+		for(int bit = BYTE_SIZE - 1; bit >= 0; bit--)
 		{
 			cout<<result[ i * BYTE_SIZE + j];
-			sum += result[i * BYTE_SIZE + bit] << j;
+			sum += result[i * BYTE_SIZE + bit] << bit;
 		}
 		cout<<" = "<<sum<<endl;
 	}
