@@ -10,12 +10,12 @@ using namespace std;
 const int BlockSize = 2;
 const int ThreadNum = 8;
 
-__global__ void gpu_bit_plane(int *d_oringinal, int*d_result)
+__global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
     int idx = blockIdx.x*blockDim.x + threadIdx.x;
     for(int i = 0; i < BYTE_SIZE; i++)
 	{
-		d_result[BYTE_SIZE*idx + i] = d_oringinal[idx] + i;
+		d_result[BYTE_SIZE*idx + i] = d_original[idx] + i;
 	}
 
 }
@@ -69,7 +69,7 @@ bool validate(int *original, int *result)
 int main()
 {
     int *original =  (int*)calloc(ARRAY_SIZE, sizeof(int));
-	int *d_oringinal = 0;
+	int *d_original = 0;
 	int *result  = (int*)calloc(BYTE_SIZE*ARRAY_SIZE, sizeof(int));
 	int *d_result = 0;
 
@@ -81,20 +81,20 @@ int main()
 
 	clock_t tStart = clock();
 	
-	cudaMalloc((void**) &d_oringinal, sizeof(int)*ARRAY_SIZE);
-	cudaMemcpy(d_oringinal, original, sizeof(int)*ARRAY_SIZE, cudaMemcpyHostToDevice);
+	cudaMalloc((void**) &d_original, sizeof(int)*ARRAY_SIZE);
+	cudaMemcpy(d_original, original, sizeof(int)*ARRAY_SIZE, cudaMemcpyHostToDevice);
 	cudaMalloc((void**) &d_result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE);
 	cudaMemcpy(d_result, result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE, cudaMemcpyHostToDevice);
 	
     dim3 dimBlock(BlockSize);
     dim3 dimGrid(ThreadNum);
-    gpu_bit_plane<<<dimGrid,dimBlock>>>(d_oringinal, d_result);
+    gpu_bit_plane<<<dimGrid,dimBlock>>>(d_original, d_result);
 	cudaDeviceSynchronize();
 	
 	cudaMemcpy(result, d_result,sizeof(int)*ARRAY_SIZE*BYTE_SIZE,cudaMemcpyDeviceToHost);
 	
 
-	print_original(oringinal);
+	print_original(original);
 	print_result1D(result);
 	
 
