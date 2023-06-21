@@ -5,7 +5,6 @@
 #include "parameter.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include
 using namespace std;
 
 const int BlockSize = 1;
@@ -36,7 +35,6 @@ int main()
 	int *d_oringinal = 0;
 	int *result  = (int*)calloc(BYTE_SIZE*ARRAY_SIZE, sizeof(int));
 	int *d_result = 0;
-	int i;
 
 	generate_number(original);
 
@@ -47,7 +45,7 @@ int main()
 	clock_t tStart = clock();
 	
 	cudaMalloc((void**) &d_oringinal, sizeof(int)*ARRAY_SIZE);
-	cudaMemcpy(d_oringinal, oringinal, sizeof(int)*ARRAY_SIZE, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_oringinal, original, sizeof(int)*ARRAY_SIZE, cudaMemcpyHostToDevice);
 	cudaMalloc((void**) &d_result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE);
 	cudaMemcpy(d_result, result, sizeof(int)*ARRAY_SIZE*BYTE_SIZE, cudaMemcpyHostToDevice);
 	
