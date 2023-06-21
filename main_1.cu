@@ -94,13 +94,17 @@ int main()
 	cudaDeviceSynchronize();
 	
 	cudaMemcpy(result, d_result,sizeof(int)*ARRAY_SIZE*BYTE_SIZE,cudaMemcpyDeviceToHost);
-	
-
-	print_original(original);
-	print_result1D(result);
-	
 
 	printf("Time taken: %.8fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
 	
+	print_original(original);
+	print_result1D(result);
+	
+	cout<<"Compare result is ";
+    if(validate(original, result))
+        cout<<"correct"<<endl;
+    else
+        cout<<"incorrect"<<endl;
+
 	return 0;
 }
