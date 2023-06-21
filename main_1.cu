@@ -49,11 +49,14 @@ void print_result1D(int* result)
 	cout<<"Result = "<<endl;
 	for(int i = 0; i < ARRAY_SIZE; i++)
 	{
-		for(int j = BYTE_SIZE - 1; j >= 0; j--)
+		cout<<"["<<i<<"] : ";
+		int sum = 0;
+		for(int bit = BYTE_SIZE - 1; bit >= 0; bit--)
 		{
-			cout<<result[ i * BYTE_SIZE + j];
+			cout<<result[ i * BYTE_SIZE + bit];
+			sum += result[i * BYTE_SIZE + bit] << bit;
 		}
-		cout<<endl;
+		cout<<" = "<<sum<<endl;
 	}
 	cout<<endl;
 }
@@ -68,7 +71,11 @@ bool validate(int *original, int *result)
         {
             sum += result[i * BYTE_SIZE + bit] << bit;
         }
-        if(original[i] != sum)return false;
+        if(original[i] != sum)
+		{
+			cout<<"["<<i<<"]"<<" is incorrect!"<<endl;
+			return false;
+		}
     }
     return true;
 }
