@@ -70,7 +70,7 @@ int main()
 {
     int *original =  (int*)calloc(ARRAY_SIZE, sizeof(int));
     int **result = (int**)calloc(ARRAY_SIZE, sizeof(int*));
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < ARRAY_SIZE; i++)
     {
         result[i] = (int*)calloc(BYTE_SIZE, sizeof(int));
     }
