@@ -12,14 +12,19 @@ const int ThreadNum = 8;
 
 __global__ void gpu_bit_plane(int *d_original, int*d_result)
 {
-    int idx = blockIdx.x*blockDim.x + threadIdx.x;
-	int val_cpy = d_original[idx];
-    for(int bit = 0; bit < BYTE_SIZE; bit++)
+
+	int TotalThread = gridDim.x*blockDim.x;
+	int stripe = N / TotalThread;
+    int head = (blockIdx.x*blockDim.x + threadIdx.x)*stripe;
+	for(int idx = head; idx<(head+stripe); idx++)
 	{
-		d_result[BYTE_SIZE*idx + bit] = val_cpy & 1;
-		val_cpy = val_cpy >> 1;
+		int val_cpy = d_original[idx];
+		for(int bit = 0; bit < BYTE_SIZE; bit++)
+		{
+			d_result[BYTE_SIZE*idx + bit] = val_cpy & 1;
+			val_cpy = val_cpy >> 1;
+		}
 	}
-	
 }
 
 void generate_number(int *original)
@@ -99,7 +104,7 @@ int main()
 	
 	print_original(original);
 	print_result1D(result);
-	
+
 	cout<<"Compare result is ";
     if(validate(original, result))
         cout<<"correct"<<endl;
